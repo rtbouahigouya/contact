@@ -1,7 +1,9 @@
 import 'package:contact/CONSTANT/couleur.dart';
 import 'package:contact/CUSTOMWIDGET/backgroundwidget.dart';
-import 'package:contact/DATARAW/data.dart';
+import 'package:contact/CUSTOMWIDGET/bouncetransition.dart';
+import 'package:contact/SCREEN/detailcontact.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ListContact extends StatefulWidget {
   @override
@@ -14,10 +16,10 @@ class _ListContactState extends State<ListContact> {
   String nom = '';
   String profession = '';
   String structure = '';
-  String numero1 = '';
-  String numero2 = '';
-  String numero3 = '';
+  String numero = '';
+  String email = '';
 
+  final _firestore = FirebaseFirestore.instance.collection('CONTACTS');
   @override
   Widget build(BuildContext context) {
     W = MediaQuery.of(context).size.width;
@@ -25,6 +27,7 @@ class _ListContactState extends State<ListContact> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: maron1,
+        automaticallyImplyLeading: false,
         actions: [
           GestureDetector(
             onTap: () => _showDialogRegister(context),
@@ -43,34 +46,52 @@ class _ListContactState extends State<ListContact> {
         width: W,
         child: CustomPaint(
           painter: BackgroundPaint(),
-          child: ListView.builder(
-            itemCount: listContact.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: bleu,
-                  child: Text(
-                    firstLetter(listContact[index].name),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
-                  ),
-                ),
-                title: Text(
-                  listContact[index].name,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                ),
-                subtitle: Text(
-                  listContact[index].structure,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              );
-            },
-          ),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore.orderBy('NOM').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+
+                if (snapshot.hasError)
+                  return Center(
+                    child: Text(snapshot.error.toString()),
+                  );
+                QuerySnapshot contact = snapshot.data;
+                return ListView.builder(
+                    itemCount: contact.size,
+                    itemBuilder: (context, index) => ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: bleu,
+                            child: Text(
+                              firstLetter(contact.docs[index]['NOM']),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24),
+                            ),
+                          ),
+                          title: Text(
+                            contact.docs[index]['NOM'],
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                          subtitle: Text(
+                            contact.docs[index]['STRUCTURE'],
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                BounceTransition(
+                                    widget: DetailContact(
+                                        contact: contact.docs[index])));
+                          },
+                        ));
+              }),
         ),
       ),
     );
@@ -131,34 +152,23 @@ class _ListContactState extends State<ListContact> {
                       height: H * .01,
                     ),
                     TextFormField(
+                      onSaved: (newValue) => email = newValue,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                          hintText: 'email',
+                          fillColor: Colors.white,
+                          filled: true),
+                    ),
+                    SizedBox(
+                      height: H * .01,
+                    ),
+                    TextFormField(
                       validator: (value) =>
                           value.isEmpty ? 'numero obligatoire' : null,
-                      onSaved: (newValue) => numero1 = newValue,
+                      onSaved: (newValue) => numero = newValue,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                          hintText: 'numero 1',
-                          fillColor: Colors.white,
-                          filled: true),
-                    ),
-                    SizedBox(
-                      height: H * .01,
-                    ),
-                    TextFormField(
-                      onSaved: (newValue) => numero2 = newValue,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          hintText: 'numero 2',
-                          fillColor: Colors.white,
-                          filled: true),
-                    ),
-                    SizedBox(
-                      height: H * .01,
-                    ),
-                    TextFormField(
-                      onSaved: (newValue) => numero3 = newValue,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          hintText: 'numero 3',
+                          hintText: 'numero',
                           fillColor: Colors.white,
                           filled: true),
                     ),
@@ -170,14 +180,19 @@ class _ListContactState extends State<ListContact> {
                         onTap: () {
                           if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
-                            print(nom);
+                            _firestore.add({
+                              'NOM': nom,
+                              'STRUCTURE': structure,
+                              'PROFESSION': profession,
+                              'NUMERO': numero,
+                              'EMAIL': email,
+                            }).then((value) => Navigator.of(context).pop());
                           } else {
                             nom = '';
                             profession = '';
                             structure = '';
-                            numero1 = '';
-                            numero2 = '';
-                            numero3 = '';
+                            numero = '';
+                            email = '';
                           }
                         },
                         child: CircleAvatar(

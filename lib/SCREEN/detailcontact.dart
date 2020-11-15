@@ -1,8 +1,12 @@
 import 'package:contact/CONSTANT/couleur.dart';
 import 'package:contact/CUSTOMWIDGET/backgroundwidget.dart';
+import 'package:contact/CUSTOMWIDGET/bouncetransition.dart';
+import 'package:contact/SCREEN/listcontact.dart';
 import 'package:flutter/material.dart';
 
 class DetailContact extends StatefulWidget {
+  var contact;
+  DetailContact({this.contact});
   @override
   _DetailContactState createState() => _DetailContactState();
 }
@@ -24,20 +28,24 @@ class _DetailContactState extends State<DetailContact> {
               SizedBox(
                 height: H * .05,
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                    child: Text(
-                      'Retour',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
-                  )
-                ],
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context, BounceTransition(widget: ListContact())),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 15),
+                      child: Text(
+                        'Retour',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
+                    )
+                  ],
+                ),
               ),
               SizedBox(
                 height: H * .05,
@@ -47,7 +55,7 @@ class _DetailContactState extends State<DetailContact> {
                   radius: W * .2,
                   backgroundColor: Colors.white.withAlpha(70),
                   child: Text(
-                    'T',
+                    firstLetter(widget.contact['NOM']),
                     style: TextStyle(
                         color: bleu,
                         fontWeight: FontWeight.bold,
@@ -69,7 +77,7 @@ class _DetailContactState extends State<DetailContact> {
                         child: Row(
                           children: [
                             Text(
-                              'traore abasse',
+                              widget.contact['NOM'],
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,
@@ -86,7 +94,7 @@ class _DetailContactState extends State<DetailContact> {
                         child: Row(
                           children: [
                             Text(
-                              'journaliste',
+                              widget.contact['PROFESSION'],
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,
@@ -103,7 +111,7 @@ class _DetailContactState extends State<DetailContact> {
                         child: Row(
                           children: [
                             Text(
-                              'rtb',
+                              widget.contact['STRUCTURE'],
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,
@@ -120,7 +128,24 @@ class _DetailContactState extends State<DetailContact> {
                         child: Row(
                           children: [
                             Text(
-                              '72496307',
+                              widget.contact['EMAIL'],
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 24,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: H * .01,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Row(
+                          children: [
+                            Text(
+                              widget.contact['NUMERO'],
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 24,
@@ -186,5 +211,9 @@ class _DetailContactState extends State<DetailContact> {
         ),
       ),
     );
+  }
+
+  String firstLetter(String word) {
+    return word[0].toUpperCase();
   }
 }

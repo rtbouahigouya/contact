@@ -1,6 +1,9 @@
 import 'package:contact/CONSTANT/couleur.dart';
 import 'package:contact/CUSTOMWIDGET/backgroundwidget.dart';
+import 'package:contact/CUSTOMWIDGET/bouncetransition.dart';
+import 'package:contact/SCREEN/listcontact.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -9,6 +12,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final formKey = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
   double H, W;
   String _email = '', _password = '';
 
@@ -89,8 +93,9 @@ class _HomeState extends State<Home> {
   submit() {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      print(_email);
-      print(_password);
+      _auth.signInWithEmailAndPassword(email: _email, password: _password).then(
+          (value) =>
+              Navigator.push(context, BounceTransition(widget: ListContact())));
     } else {
       _email = _password = '';
     }

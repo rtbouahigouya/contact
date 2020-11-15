@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1050972489164",
+    "firebase_url": "https://contact-910d1.firebaseio.com",
+    "project_id": "contact-910d1",
+    "storage_bucket": "contact-910d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050972489164:android:497d4b6d6d2bfdbe768969",
+        "android_client_info": {
+          "package_name": "fr.traore_service.contact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050972489164-nifktrs1ougeo2mqeg1ica3mhe4c4iap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs7G3JkOUpKw0pcrZW4_Y6LIpH4ndtAVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050972489164-nifktrs1ougeo2mqeg1ica3mhe4c4iap.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
