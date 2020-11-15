@@ -3,6 +3,8 @@ import 'package:contact/CUSTOMWIDGET/backgroundwidget.dart';
 import 'package:contact/CUSTOMWIDGET/bouncetransition.dart';
 import 'package:contact/SCREEN/listcontact.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailContact extends StatefulWidget {
   var contact;
@@ -13,6 +15,7 @@ class DetailContact extends StatefulWidget {
 
 class _DetailContactState extends State<DetailContact> {
   double W, H;
+  final _firestore = FirebaseFirestore.instance.collection('CONTACTS');
   @override
   Widget build(BuildContext context) {
     W = MediaQuery.of(context).size.width;
@@ -171,7 +174,9 @@ class _DetailContactState extends State<DetailContact> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _launchURL('tel:${widget.contact['NUMERO']}');
+                        },
                         icon: Icon(
                           Icons.call,
                           color: Colors.green,
@@ -179,7 +184,9 @@ class _DetailContactState extends State<DetailContact> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _launchURL('sms:${widget.contact['NUMERO']}');
+                        },
                         icon: Icon(
                           Icons.message,
                           color: Colors.blue,
@@ -187,7 +194,9 @@ class _DetailContactState extends State<DetailContact> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _launchURL('mailto:${widget.contact['EMAIL']}');
+                        },
                         icon: Icon(
                           Icons.mail,
                           color: Colors.deepOrange,
@@ -195,7 +204,11 @@ class _DetailContactState extends State<DetailContact> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _firestore.doc(widget.contact.id).delete().then(
+                              (value) => Navigator.push(context,
+                                  BounceTransition(widget: ListContact())));
+                        },
                         icon: Icon(
                           Icons.delete,
                           color: Colors.red[900],
@@ -215,5 +228,13 @@ class _DetailContactState extends State<DetailContact> {
 
   String firstLetter(String word) {
     return word[0].toUpperCase();
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
