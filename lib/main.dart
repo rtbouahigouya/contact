@@ -1,6 +1,7 @@
 import 'package:contact/CONSTANT/couleur.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:splash_screen_view/SplashScreenView.dart';
 
 import 'SCREEN/home.dart';
 
@@ -19,7 +20,24 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: bleu,
       ),
-      home: Home(),
+      home: SplashScreenView(
+        home: Home(),
+        duration: 4000,
+        imageSize: 100,
+        imageSrc: "images/logo.png",
+        text: "Contact clients rtb",
+        textType: TextType.ColorizeAnimationText,
+        textStyle: TextStyle(
+          fontSize: 40.0,
+        ),
+        colors: [
+          Colors.purple,
+          Colors.blue,
+          Colors.yellow,
+          Colors.red,
+        ],
+        backgroundColor: maron1,
+      ),
     );
   }
 }
