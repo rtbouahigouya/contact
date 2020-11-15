@@ -2,7 +2,7 @@
     package="fr.traore_service.contact">
    <application
         android:label="contact"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
